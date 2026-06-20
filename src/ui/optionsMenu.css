@@ -1,0 +1,127 @@
+:root {
+  --bg: #1a1f1a;
+  --panel: #11160f;
+  --text: #6b8a60;
+  --text-dim: #4a6741;
+  --border: #3a4a38;
+  --accent: #2d3a2a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  font-family: "Courier New", ui-monospace, monospace;
+}
+
+#app {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #14180f 0%, #000 100%);
+}
+
+#game-container {
+  line-height: 0;
+  box-shadow: 0 0 40px rgba(40, 70, 30, 0.25);
+}
+
+#game-container canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Menu toggle button -------------------------------------------------------- */
+#menu-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+#menu-toggle:hover {
+  color: #8fb380;
+  border-color: var(--text-dim);
+}
+
+/* Options overlay ----------------------------------------------------------- */
+#options-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 12, 6, 0.72);
+}
+
+.options-panel {
+  width: 320px;
+  padding: 28px 28px 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: 0 0 30px rgba(40, 70, 30, 0.3);
+}
+
+.options-panel h1 {
+  margin: 0 0 24px;
+  font-size: 22px;
+  letter-spacing: 6px;
+  text-align: center;
+  color: var(--text);
+  text-shadow: 0 0 8px rgba(70, 120, 60, 0.5);
+}
+
+.opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.opt-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--text-dim);
+}
+
+.options-panel button {
+  width: 100%;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text);
+  background: var(--accent);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.options-panel button:hover {
+  color: #8fb380;
+  border-color: var(--text-dim);
+}
+
+/* Utility ------------------------------------------------------------------- */
+.hidden {
+  display: none !important;
+}
