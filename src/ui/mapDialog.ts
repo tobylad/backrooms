@@ -1,7 +1,9 @@
 import type Phaser from 'phaser';
 import { renderRoomMap } from './roomMap';
+import { renderRoomHistory } from './roomHistory';
 import {
   getPlayerRoom,
+  getRoomHistory,
   getVisitedRooms,
   onPlayerRoom,
 } from '../game/systems/playerLocation';
@@ -39,7 +41,10 @@ export function initMapDialog(game: Phaser.Game): MapDialog {
         <h1>MAP</h1>
         <button id="map-close" type="button" aria-label="Close map">&times;</button>
       </header>
-      <div class="map-body"><div id="map-canvas"></div></div>
+      <div class="map-body">
+        <div id="map-canvas"></div>
+        <div id="map-history"></div>
+      </div>
       <footer class="map-footer">
         <span class="map-legend"><span class="beacon-swatch"></span> You are here</span>
         <span id="map-status" class="map-status" hidden>Press <kbd class="map-key">M</kbd> to toggle map</span>
@@ -49,6 +54,7 @@ export function initMapDialog(game: Phaser.Game): MapDialog {
   `;
 
   const canvas = host.querySelector('#map-canvas') as HTMLElement;
+  const historyEl = host.querySelector('#map-history') as HTMLElement;
   const status = host.querySelector('#map-status') as HTMLElement;
   let unsubscribe: (() => void) | null = null;
 
@@ -56,6 +62,7 @@ export function initMapDialog(game: Phaser.Game): MapDialog {
     canvas.replaceChildren(
       renderRoomMap({ current: getPlayerRoom(), visited: getVisitedRooms() }),
     );
+    historyEl.replaceChildren(renderRoomHistory(getRoomHistory()));
   };
 
   const isOpen = (): boolean => !host.classList.contains('hidden');

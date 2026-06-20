@@ -1,0 +1,57 @@
+/* Recent room trail shown directly below the grid map in the in-game dialog.
+   Inherits the dialog's monospace font and green palette; falls back to literal
+   colors so it still reads if loaded in isolation. */
+
+.room-history {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #3a4a38);
+  font-family: "Courier New", ui-monospace, monospace;
+  color: var(--text-dim, #4a6741);
+}
+
+.room-history__title {
+  flex-shrink: 0;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.room-history__list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* Most recent first; older rooms scroll off to the right rather than wrap. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.room-history__list--empty {
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.room-history__item {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--border, #3a4a38);
+  border-radius: 3px;
+  background: rgba(40, 70, 30, 0.14);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text, #6b8a60);
+}
+
+/* The most recent room (first chip) gets the beacon-green highlight to tie it
+   back to the "you are here" marker on the grid above. */
+.room-history__item:first-child {
+  border-color: #8fb380;
+  color: #9bd17f;
+  text-shadow: 0 0 6px rgba(155, 209, 127, 0.4);
+}

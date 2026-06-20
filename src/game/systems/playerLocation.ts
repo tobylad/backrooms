@@ -22,12 +22,17 @@ type Listener = (coord: RoomCoord) => void;
 
 let current: RoomCoord = { col: START_ROOM.col, row: START_ROOM.row };
 const visited = new Set<string>([key(START_ROOM.col, START_ROOM.row)]);
+// Ordered trail of every room the player has entered, oldest first. Unlike
+// `visited` (a unique set), this keeps duplicates so a back-and-forth shows up
+// as repeated entries — it's a movement log, not a discovery set.
+const history: RoomCoord[] = [{ col: START_ROOM.col, row: START_ROOM.row }];
 const listeners = new Set<Listener>();
 
 /** Record the room the player just entered (marking it visited) and notify. */
 export function setPlayerRoom(col: number, row: number): void {
   current = { col, row };
   visited.add(key(col, row));
+  history.push({ col, row });
   for (const fn of listeners) fn(current);
 }
 
@@ -39,6 +44,14 @@ export function getPlayerRoom(): RoomCoord {
 /** Keys (`col,row`) of every room the player has discovered this session. */
 export function getVisitedRooms(): Set<string> {
   return new Set(visited);
+}
+
+/**
+ * The player's recent room trail, most-recent-first. Includes duplicates (a
+ * room re-entered shows up again), so it reads as a log of where they've been.
+ */
+export function getRoomHistory(): RoomCoord[] {
+  return history.slice().reverse();
 }
 
 /** Subscribe to room changes. Returns an unsubscribe function. */
