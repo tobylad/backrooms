@@ -1,0 +1,168 @@
+/* World-map diagram. Shared by the in-game dialog (mapDialog) and the public
+   documentation page (map.html). The grid is laid out from room (col,row)
+   coordinates so it mirrors how the player actually moves through the rooms.
+
+   The map contain-fits its parent, so any element wrapping `.room-map` should
+   be `container-type: size` with a definite height. */
+
+.room-map {
+  /* --map-cols / --map-rows are set inline by renderRoomMap(). */
+  --map-aspect-w: calc(var(--map-cols) * 4);
+  --map-aspect-h: calc(var(--map-rows) * 3);
+  --map-gap: clamp(8px, 2cqw, 16px);
+
+  --room-bg: #11160f;
+  --room-bg-hover: #16210f;
+  --room-border: #3a4a38;
+  --room-text: #6b8a60;
+  --door-color: #5e7a52;
+  --beacon-color: #9bd17f;
+
+  display: grid;
+  grid-template-columns: repeat(var(--map-cols), 1fr);
+  grid-template-rows: repeat(var(--map-rows), 1fr);
+  gap: var(--map-gap);
+
+  /* Largest box of the map's aspect ratio that fits the container on both
+     axes (100cqh = container height, 100% = container width). */
+  aspect-ratio: var(--map-aspect-w) / var(--map-aspect-h);
+  width: min(100%, calc(100cqh * var(--map-aspect-w) / var(--map-aspect-h)));
+  margin: auto;
+}
+
+.room-map--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--room-text);
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: clamp(11px, 3cqw, 15px);
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.room-cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--room-bg);
+  border: 1px solid var(--room-border);
+  box-shadow: inset 0 0 14px rgba(40, 70, 30, 0.18);
+  color: var(--room-text);
+  font-family: "Courier New", ui-monospace, monospace;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.room-cell:hover,
+.room-cell:focus-visible {
+  background: var(--room-bg-hover);
+  border-color: #5a7350;
+  outline: none;
+}
+
+.room-cell.is-selected {
+  border-color: #8fb380;
+  box-shadow: inset 0 0 18px rgba(70, 120, 60, 0.3);
+}
+
+.room-label {
+  font-size: clamp(10px, 4cqw, 18px);
+  letter-spacing: 2px;
+  text-shadow: 0 0 6px rgba(40, 70, 30, 0.6);
+  pointer-events: none;
+}
+
+/* Door nubs sit on the cell edge and poke into the gap between rooms, so two
+   adjacent rooms with a shared door read as a connection. */
+.room-door {
+  position: absolute;
+  background: var(--door-color);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.room-door--north,
+.room-door--south {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28%;
+  height: 5px;
+}
+.room-door--north {
+  top: -3px;
+}
+.room-door--south {
+  bottom: -3px;
+}
+
+.room-door--east,
+.room-door--west {
+  top: 50%;
+  transform: translateY(-50%);
+  height: 28%;
+  width: 5px;
+}
+.room-door--west {
+  left: -3px;
+}
+.room-door--east {
+  right: -3px;
+}
+
+/* "You are here" — a hard on/off blink, Zelda map-screen style. */
+.room-cell.is-current {
+  border-color: var(--beacon-color);
+  box-shadow: inset 0 0 18px rgba(155, 209, 127, 0.28);
+}
+.room-cell.is-current .room-label {
+  color: var(--beacon-color);
+}
+
+.room-beacon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--beacon-color);
+  box-shadow: 0 0 12px 3px rgba(155, 209, 127, 0.8);
+  pointer-events: none;
+  animation: room-beacon-flash 0.9s steps(1, end) infinite;
+}
+
+/* Reusable legend swatch, used by the dialog and doc-page legends. */
+.beacon-swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--beacon-color, #9bd17f);
+  box-shadow: 0 0 8px 2px rgba(155, 209, 127, 0.7);
+  animation: room-beacon-flash 0.9s steps(1, end) infinite;
+}
+
+@keyframes room-beacon-flash {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-beacon,
+  .beacon-swatch {
+    animation: none;
+  }
+}

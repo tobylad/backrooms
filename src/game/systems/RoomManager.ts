@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { COLS, ROWS, TILE_SIZE } from '../constants';
 import { getRoom, isDoor, isWall } from '../../data/rooms';
+import { setPlayerRoom } from './playerLocation';
 import type { Edge, RoomDef } from '../../types';
 
 /**
@@ -71,6 +72,10 @@ export class RoomManager {
     }
 
     this.current = room;
+    // Publish the active room so the world map (and any other listener) knows
+    // where the player is. Every room load funnels through here, so this single
+    // call covers the initial spawn and every door transition.
+    setPlayerRoom(col, row);
     return room;
   }
 

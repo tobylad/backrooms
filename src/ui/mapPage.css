@@ -1,0 +1,106 @@
+/* Styling for the public documentation page (map.html). The map diagram itself
+   is styled by roomMap.css; this file is just page chrome and prose. */
+
+:root {
+  --bg: #0c0f0a;
+  --panel: #11160f;
+  --text: #8fb380;
+  --text-dim: #6b8a60;
+  --text-faint: #4a6741;
+  --border: #3a4a38;
+  --accent: #9bd17f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #14180f 0%, #000 100%);
+  color: var(--text-dim);
+  font-family: "Courier New", ui-monospace, monospace;
+  line-height: 1.6;
+}
+
+.doc {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.doc h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: var(--text);
+  text-shadow: 0 0 12px rgba(70, 120, 60, 0.5);
+}
+
+.doc h2 {
+  margin: 48px 0 12px;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.doc .lead {
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+.doc p,
+.doc li {
+  font-size: 14px;
+}
+
+.doc a {
+  color: var(--accent);
+}
+
+.doc code {
+  padding: 1px 5px;
+  background: #0a0d07;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.doc pre {
+  margin: 12px 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  background: #0a0d07;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.doc pre code {
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+/* The framed map. `container-type: size` + a definite height give roomMap.css
+   the sizing context it contain-fits against. */
+.map-frame {
+  height: min(70vh, 70vw);
+  margin: 20px 0 12px;
+  padding: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 40px rgba(40, 70, 30, 0.25) inset;
+  container-type: size;
+}
+
+.legend-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-faint);
+  font-size: 13px;
+}

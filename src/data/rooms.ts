@@ -194,6 +194,25 @@ const SPECS: RoomSpec[] = [
   },
 ];
 
+// --- Map metadata -----------------------------------------------------------
+// Lightweight, tile-free view of every room, derived from the SAME SPECS that
+// build the playable rooms. The world-map UI (src/ui/roomMap.ts) renders from
+// this, so ANY room added to SPECS above appears on the map automatically — no
+// second list to maintain. See map.html for the full documentation.
+export interface RoomMeta {
+  id: string;
+  col: number;
+  row: number;
+  doors: Partial<Record<Edge, boolean>>;
+}
+
+export const ROOM_META: RoomMeta[] = SPECS.map((spec) => ({
+  id: spec.id,
+  col: spec.col,
+  row: spec.row,
+  doors: spec.doors,
+}));
+
 const ROOMS = new Map<string, RoomDef>();
 for (const spec of SPECS) ROOMS.set(`${spec.col},${spec.row}`, buildRoom(spec));
 
@@ -205,5 +224,5 @@ export function getRoom(col: number, row: number): RoomDef | undefined {
   return ROOMS.get(key(col, row));
 }
 
-/** Room the player spawns in: the central hub. */
-export const START_ROOM = { col: 1, row: 1 };
+/** Room the player spawns in: R1, the open antechamber at the top. */
+export const START_ROOM = { col: 1, row: 0 };

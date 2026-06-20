@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backrooms — World Map & Room Documentation</title>
+    <link rel="stylesheet" href="/src/ui/roomMap.css" />
+    <link rel="stylesheet" href="/src/ui/mapPage.css" />
+  </head>
+  <body>
+    <main class="doc">
+      <h1>BACKROOMS — WORLD MAP</h1>
+      <p class="lead">
+        A living map of every room built so far, and the documentation for the
+        room-tracking system behind it. The diagram below is generated directly
+        from the game's room data, so it is always in sync with what you can
+        actually walk through.
+      </p>
+
+      <h2>THE MAP</h2>
+      <p>
+        Each box is a room, placed at its real position in the world grid: a
+        room one step north sits directly above its neighbour, a room to the
+        west sits to its left. The small nubs on a room's edges are
+        <strong>doors</strong> — where two adjacent rooms both have a nub facing
+        each other, you can walk between them. Hover a room for its exits; click
+        to pin a highlight while tracing a path.
+      </p>
+      <p>
+        This page is the full <em>design reference</em> — every room built so
+        far. The in-game map is fog-of-war: it reveals only the rooms the player
+        has actually walked into, filling in as they explore, and resets to the
+        spawn room whenever the game is refreshed or restarted.
+      </p>
+      <section class="map-frame"><div id="map-root"></div></section>
+      <p class="legend-line">
+        <span class="beacon-swatch"></span>
+        In-game, a beacon flashes over the room the player is currently in —
+        open it from <em>Menu → World Map</em>.
+      </p>
+
+      <h2>HOW IT WORKS</h2>
+      <p>
+        Rooms are defined once, in <code>src/data/rooms.ts</code>, as a list of
+        <code>SPECS</code> — each with an <code>id</code>, a grid
+        <code>col</code>/<code>row</code>, and which edges have
+        <code>doors</code>. From that single list the game derives both the
+        playable rooms and a lightweight <code>ROOM_META</code> array. The map UI
+        (<code>src/ui/roomMap.ts</code>) renders purely from
+        <code>ROOM_META</code>, using CSS grid to lay each room out at its
+        <code>col</code>/<code>row</code>.
+      </p>
+      <p>The same renderer powers two surfaces:</p>
+      <ul>
+        <li>
+          <strong>This page</strong> — a public reference map of the whole
+          world.
+        </li>
+        <li>
+          <strong>The in-game dialog</strong> — opened from
+          <em>Menu → World Map</em>, sized to the game screen, with a flashing
+          beacon on the player's current room and an easy exit (× button,
+          backdrop click, or <code>Esc</code>) back to the game. The beacon
+          follows the player live via a small location store
+          (<code>src/game/systems/playerLocation.ts</code>).
+        </li>
+      </ul>
+
+      <h2>ADDING A ROOM</h2>
+      <p>
+        Because everything flows from the one <code>SPECS</code> list, adding a
+        room puts it on this map and the in-game map automatically — there is no
+        second place to update. Add an entry at the coordinate you want, wired to
+        its neighbours with matching doors:
+      </p>
+      <pre><code>// src/data/rooms.ts
+{
+  id: 'R7',
+  col: 3,            // one room east of R4 (col 2)
+  row: 1,
+  doors: { west: true },   // a door back toward R4
+},</code></pre>
+      <p>
+        For the connection to be walkable, the neighbour must have the opposing
+        door too (here, give R4 an <code>east: true</code> door). Doors use
+        standardized openings on both sides, so the player always lands in the
+        matching gap when crossing. Reload the map and the new room appears in
+        place.
+      </p>
+    </main>
+    <script type="module" src="/src/ui/mapPage.ts"></script>
+  </body>
+</html>
