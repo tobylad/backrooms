@@ -91,11 +91,16 @@
   gap: 8px;
 }
 
-/* "Press M to toggle map" hint, shown only when the map is opened from the menu. */
+/* "Press M to toggle map" hint, shown only when the map is opened from the menu.
+   Brightened and given a soft glow so it stands out against the dim footer and
+   doesn't get missed. */
 .map-status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  /* Same green palette as the footer, pushed brighter so the hint reads first. */
+  color: var(--text-bright, #b6e6a0);
+  text-shadow: 0 0 6px rgba(150, 230, 120, 0.55);
 }
 
 /* A single keycap, styled to resemble a physical keyboard key. */
@@ -103,15 +108,17 @@
   display: inline-block;
   min-width: 1.1em;
   padding: 1px 5px;
-  border: 1px solid var(--border, #3a4a38);
+  border: 1px solid rgba(150, 230, 120, 0.6);
   /* Thicker bottom edge gives the cap a slight 3D lip. */
   border-bottom-width: 2px;
   border-radius: 3px;
-  background: rgba(40, 70, 30, 0.18);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+  background: rgba(60, 110, 40, 0.3);
+  /* Inner-and-outer green glow keeps the cap consistent with the brighter hint. */
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 0 6px rgba(150, 230, 120, 0.45);
   font-family: inherit;
   font-size: 11px;
   line-height: 1.3;
   text-align: center;
-  color: var(--text, #6b8a60);
+  color: var(--text-bright, #b6e6a0);
+  text-shadow: 0 0 5px rgba(150, 230, 120, 0.55);
 }
