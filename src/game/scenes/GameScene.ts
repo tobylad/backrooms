@@ -21,10 +21,6 @@ export class GameScene extends Phaser.Scene {
   private sfx!: Sfx;
   private flicker!: Phaser.GameObjects.Rectangle;
   private isTransitioning = false;
-  // Which subroom the player is currently standing in. Tracked so crossing an
-  // open wall into the next subroom can play the scroll breeze exactly once.
-  private subPos = { sc: 0, sr: 0 };
-  private multiSub = false;
 
   constructor() {
     super('GameScene');
@@ -43,7 +39,6 @@ export class GameScene extends Phaser.Scene {
 
     this.addAtmosphere();
     this.configureCamera(room);
-    this.resetSubTracking(room);
     this.cameras.main.fadeIn(FADE_MS, 0, 0, 0);
   }
 
@@ -78,38 +73,13 @@ export class GameScene extends Phaser.Scene {
     cam.centerOn(this.player.sprite.x, this.player.sprite.y);
   }
 
-  /** Reset the "current subroom" tracker to wherever the player just landed. */
-  private resetSubTracking(room: RoomDef): void {
-    this.multiSub = room.subrooms.filter((s) => !s.solid).length > 1;
-    this.subPos = this.subAt();
-  }
-
-  private subAt(): { sc: number; sr: number } {
-    const room = this.rooms.current;
-    const p = this.player.sprite;
-    const sc = Phaser.Math.Clamp(Math.floor(p.x / GAME_WIDTH), 0, room.subCols - 1);
-    const sr = Phaser.Math.Clamp(Math.floor(p.y / GAME_HEIGHT), 0, room.subRows - 1);
-    return { sc, sr };
-  }
-
   update(time: number): void {
     this.player.update();
     this.checkEdges();
-    this.checkSubroomScroll();
 
     // ~2s sine cycle between alpha 0 and 0.04 — unstable lighting.
     const a = (Math.sin(time * 0.003) * 0.5 + 0.5) * 0.04;
     this.flicker.setAlpha(a);
-  }
-
-  /** Play the light breeze the first frame the player enters a new subroom. */
-  private checkSubroomScroll(): void {
-    if (this.isTransitioning || !this.multiSub) return;
-    const { sc, sr } = this.subAt();
-    if (sc !== this.subPos.sc || sr !== this.subPos.sr) {
-      this.sfx.scroll();
-      this.subPos = { sc, sr };
-    }
   }
 
   private checkEdges(): void {
@@ -145,7 +115,6 @@ export class GameScene extends Phaser.Scene {
       const spawn = entrySpawn(room, OPPOSITE[edge]);
       this.player.placeAt(spawn.x, spawn.y, spawn.facing);
       this.configureCamera(room);
-      this.resetSubTracking(room);
       this.cameras.main.fadeIn(FADE_MS, 0, 0, 0);
       this.isTransitioning = false;
       this.player.frozen = false;
