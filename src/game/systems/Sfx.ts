@@ -113,6 +113,40 @@ export class Sfx {
     breeze.stop(t + 1.2);
   }
 
+  /**
+   * Played when scrolling through an open wall between two subrooms: a quick,
+   * airy gust. Deliberately lighter and faster than `roomTransition` — higher in
+   * pitch, softer, and over in a fraction of the time, with no door creak — so a
+   * seamless scroll feels distinct from stepping through an actual door.
+   */
+  scroll(): void {
+    const ctx = this.ctx;
+    if (!ctx || !this.out || !this.noise) return;
+    this.wake(ctx);
+    const t = ctx.currentTime;
+
+    const air = ctx.createBufferSource();
+    air.buffer = this.noise;
+    air.loop = true;
+
+    // High, narrow band that sweeps up fast then eases off — a passing draft.
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass';
+    band.frequency.setValueAtTime(900, t);
+    band.frequency.linearRampToValueAtTime(1500, t + 0.18);
+    band.frequency.linearRampToValueAtTime(1050, t + 0.42);
+    band.Q.value = 0.7;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.05, t + 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+
+    air.connect(band).connect(gain).connect(this.out);
+    air.start(t, Math.random());
+    air.stop(t + 0.45);
+  }
+
   /** Two seconds of white noise, reused (looped) as the source for textures. */
   private makeNoise(ctx: AudioContext): AudioBuffer {
     const len = Math.floor(ctx.sampleRate * 2);

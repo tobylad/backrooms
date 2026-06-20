@@ -32,6 +32,18 @@
         has actually walked into, filling in as they explore, and resets to the
         spawn room whenever the game is refreshed or restarted.
       </p>
+      <p>
+        Some rooms are <strong>scroll rooms</strong>: instead of a single
+        screen, they stitch several screen-sized <em>subrooms</em> into one
+        continuous space the camera scrolls across. Subrooms are joined by
+        <em>open walls</em> — wide gaps you simply walk through, with a light,
+        fast breeze rather than the creak of a door — and a scroll room can take
+        on non-rectangular shapes as long as those openings line up. On both
+        maps the whole thing is still a <em>single cell</em>: the subrooms
+        (referred to internally as <code>R7-1</code>, <code>R7-2</code>, …) are
+        an implementation detail the player never sees. You stay "in R7" and
+        navigate it by scrolling.
+      </p>
       <section class="map-frame"><div id="map-root"></div></section>
       <p class="legend-line">
         <span class="beacon-swatch"></span>
