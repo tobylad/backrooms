@@ -27,10 +27,10 @@ export function isDoor(tile: number): boolean {
 // when the player is repositioned to the opposite edge (preserving the cross-
 // axis coordinate) they always land inside the matching gap.
 //
-// Vertical doors (north/south edges): 2 tiles wide, columns 9 & 10.
-// Horizontal doors (east/west edges): 2 tiles tall, rows 7 & 8.
-export const DOOR_COLS = [9, 10] as const; // for north / south openings
-export const DOOR_ROWS = [7, 8] as const; // for east / west openings
+// Vertical doors (north/south edges): 2 tiles wide, centered columns.
+// Horizontal doors (east/west edges): 2 tiles tall, centered rows.
+export const DOOR_COLS = [13, 14] as const; // for north / south openings
+export const DOOR_ROWS = [10, 11] as const; // for east / west openings
 
 // --- Standardized open boundaries (scroll rooms) ----------------------------
 // Where two subrooms of the same room meet, an `open` edge replaces the wall
@@ -38,8 +38,8 @@ export const DOOR_ROWS = [7, 8] as const; // for east / west openings
 // Like doors, both sides use the same standardized cells so the openings line
 // up exactly — "the walls from each scrolling area fit together". Wider than a
 // door (and drawn as plain floor, no door art) so it reads as an open wall.
-export const OPEN_COLS = [6, 7, 8, 9, 10, 11, 12, 13] as const; // north / south
-export const OPEN_ROWS = [4, 5, 6, 7, 8, 9, 10] as const; // east / west
+export const OPEN_COLS = [10, 11, 12, 13, 14, 15, 16, 17] as const; // north / south
+export const OPEN_ROWS = [7, 8, 9, 10, 11, 12, 13] as const; // east / west
 
 /** A subroom: one screen of a room, on the room's local sub-grid. */
 interface SubroomSpec {
@@ -108,22 +108,22 @@ function buildSubroomTiles(sub: SubroomSpec, seed: number): number[][] {
   if (doors.north) {
     tiles[0][DOOR_COLS[0]] = DL;
     tiles[0][DOOR_COLS[1]] = DR;
-    clearLanding(tiles, 8, 11, 1, 2);
+    clearLanding(tiles, DOOR_COLS[0] - 1, DOOR_COLS[1] + 1, 1, 2);
   }
   if (doors.south) {
     tiles[ROWS - 1][DOOR_COLS[0]] = DL;
     tiles[ROWS - 1][DOOR_COLS[1]] = DR;
-    clearLanding(tiles, 8, 11, ROWS - 3, ROWS - 2);
+    clearLanding(tiles, DOOR_COLS[0] - 1, DOOR_COLS[1] + 1, ROWS - 3, ROWS - 2);
   }
   if (doors.west) {
     tiles[DOOR_ROWS[0]][0] = DL;
     tiles[DOOR_ROWS[1]][0] = DR;
-    clearLanding(tiles, 1, 2, 6, 9);
+    clearLanding(tiles, 1, 2, DOOR_ROWS[0] - 1, DOOR_ROWS[1] + 1);
   }
   if (doors.east) {
     tiles[DOOR_ROWS[0]][COLS - 1] = DL;
     tiles[DOOR_ROWS[1]][COLS - 1] = DR;
-    clearLanding(tiles, COLS - 3, COLS - 2, 6, 9);
+    clearLanding(tiles, COLS - 3, COLS - 2, DOOR_ROWS[0] - 1, DOOR_ROWS[1] + 1);
   }
 
   // Carve open boundaries: a wide gap of plain floor (no door art) plus a deep
@@ -288,7 +288,7 @@ const SPECS: RoomSpec[] = [
     col: 0,
     row: 1,
     doors: { east: true },
-    walls: [...vLine(6, 4, 9), ...hLine(9, 6, 12)],
+    walls: [...vLine(8, 5, 13), ...hLine(13, 8, 17), ...vLine(20, 3, 7)],
   },
 
   // R3 — central hub, three doors (N, W, E) + four pillars.
@@ -298,10 +298,12 @@ const SPECS: RoomSpec[] = [
     row: 1,
     doors: { north: true, west: true, east: true },
     walls: [
-      [6, 5],
-      [13, 5],
-      [6, 9],
-      [13, 9],
+      [8, 7],
+      [18, 7],
+      [8, 13],
+      [18, 13],
+      [8, 16],
+      [18, 16],
     ],
   },
 
@@ -311,7 +313,7 @@ const SPECS: RoomSpec[] = [
     col: 2,
     row: 1,
     doors: { west: true, south: true },
-    walls: [...vLine(6, 1, 6), ...vLine(13, 8, 13)],
+    walls: [...vLine(8, 1, 8), ...vLine(18, 11, 19), ...vLine(13, 13, 17)],
   },
 
   // R5 — dead-end with two offset blocks (E door only).
@@ -320,7 +322,7 @@ const SPECS: RoomSpec[] = [
     col: 1,
     row: 2,
     doors: { east: true },
-    walls: [...vLine(5, 3, 6), ...vLine(14, 8, 11)],
+    walls: [...vLine(7, 4, 8), ...vLine(20, 11, 16), ...hLine(11, 3, 6)],
   },
 
   // R6 — horizontal corridor feel (N, W and now E doors; E leads to R7).
@@ -329,7 +331,13 @@ const SPECS: RoomSpec[] = [
     col: 2,
     row: 2,
     doors: { north: true, west: true, east: true },
-    walls: [...hLine(3, 1, 6), ...hLine(3, 13, 18), ...hLine(11, 1, 18)],
+    walls: [
+      ...hLine(4, 1, 8),
+      ...hLine(4, 18, 26),
+      ...hLine(16, 1, 26),
+      [11, 8],
+      [16, 8],
+    ],
   },
 
   // R7 — the first SCROLL ROOM: three screen-sized subrooms stitched into one
@@ -352,21 +360,21 @@ const SPECS: RoomSpec[] = [
         subRow: 0,
         doors: { west: true },
         open: { east: true },
-        walls: [...vLine(7, 1, 3), ...vLine(12, 11, 13)],
+        walls: [...vLine(10, 1, 4), ...vLine(17, 16, 19), ...hLine(5, 10, 13)],
       },
       // R7-2 — junction. Open west to R7-1, open south down to R7-3.
       {
         subCol: 1,
         subRow: 0,
         open: { west: true, south: true },
-        walls: [...vLine(15, 2, 12), [5, 2], [6, 2]],
+        walls: [...vLine(21, 2, 17), [7, 2], [8, 2]],
       },
       // R7-3 — dead-end pocket. Open north back up to R7-2.
       {
         subCol: 1,
         subRow: 1,
         open: { north: true },
-        walls: [...hLine(7, 2, 5), ...hLine(7, 14, 17), [9, 11], [10, 11]],
+        walls: [...hLine(10, 2, 7), ...hLine(10, 20, 24), [13, 16], [14, 16]],
       },
     ],
   },
