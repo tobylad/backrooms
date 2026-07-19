@@ -1,7 +1,7 @@
 import { COLS, ROWS, TILE_SIZE } from '../game/constants';
 import type { Edge, RoomDef, SubroomDef } from '../types';
 
-// Tile index constants (match tileset.png order).
+// Tile index constants (match tileset-40.png order).
 export const F1 = 0; // Floor A
 export const F2 = 1; // Floor B
 export const WT = 2; // Wall Top

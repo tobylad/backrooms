@@ -6,10 +6,10 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Tileset — each tile 32x32, sheet 128x64 (4 cols x 2 rows = 8 tiles).
-    this.load.spritesheet('tileset', 'assets/tileset.png', {
-      frameWidth: 32,
-      frameHeight: 32,
+    // Tileset — each tile 40x40, sheet 160x80 (4 cols x 2 rows = 8 tiles).
+    this.load.spritesheet('tileset-40', 'assets/tileset-40.png', {
+      frameWidth: 40,
+      frameHeight: 40,
     });
 
     // Player — each frame 48x48, sheet 144x192 (3 cols x 4 rows = 12 frames).

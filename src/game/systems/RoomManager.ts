@@ -59,10 +59,10 @@ export class RoomManager {
 
           const img = rotateDoor
             ? this.scene.add
-                .image(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 'tileset', tile)
+                .image(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 'tileset-40', tile)
                 .setOrigin(0.5, 0.5)
                 .setAngle(90)
-            : this.scene.add.image(x, y, 'tileset', tile).setOrigin(0, 0);
+            : this.scene.add.image(x, y, 'tileset-40', tile).setOrigin(0, 0);
           img.setDepth(0);
           this.tileLayer.add(img);
 
@@ -72,7 +72,7 @@ export class RoomManager {
             // Static body sized to the tile, top-left aligned.
             // The visible tile is already drawn above; this body is collision
             // only, so keep it invisible to avoid double-drawing.
-            const body = this.wallGroup.create(x, y, 'tileset', tile) as
+            const body = this.wallGroup.create(x, y, 'tileset-40', tile) as
               Phaser.Physics.Arcade.Sprite;
             body.setOrigin(0, 0);
             body.setVisible(false);
