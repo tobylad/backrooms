@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { COLS, ROWS, TILE_SIZE } from '../constants';
-import { getRoom, isDoor, isWall } from '../../data/rooms';
+import { DL, getRoom, isDoor, isWall } from '../../data/rooms';
 import { setPlayerRoom } from './playerLocation';
 import type { Edge, RoomDef } from '../../types';
 
@@ -48,20 +48,34 @@ export class RoomManager {
           const x = baseX + c * TILE_SIZE;
           const y = baseY + r * TILE_SIZE;
 
-          // Door art is drawn for a horizontal opening (DL/DR side by side).
-          // On the left/right subroom edges the doorway is vertical, so rotate
-          // the sprite 90° to match. Rotation pivots around the sprite's origin,
-          // so for these we center the origin (and position) — a square tile
-          // rotated about its center stays within the same cell — instead of
-          // the usual top-left origin used for axis-aligned tiles.
-          const onVerticalEdge = c === 0 || c === COLS - 1;
-          const rotateDoor = isDoor(tile) && onVerticalEdge;
+          // Door art is drawn as a top-left corner piece (DL: trim on its top
+          // and left edges) or top-right (DR: trim on top and right). Each
+          // door tile needs the trim rotated onto whichever corner faces
+          // outward on its actual wall — e.g. a south-wall door needs the
+          // trim on the BOTTOM (outward) and its outer side edge, not top.
+          // Rotation pivots around the sprite's origin, so for doors we
+          // center the origin (and position) — a square tile rotated about
+          // its center stays within the same cell — instead of the usual
+          // top-left origin used for axis-aligned tiles.
+          let doorAngle = 0;
+          if (isDoor(tile)) {
+            const isLeftPiece = tile === DL;
+            if (r === 0) {
+              doorAngle = 0; // north: matches the art as drawn
+            } else if (r === ROWS - 1) {
+              doorAngle = isLeftPiece ? 270 : 90; // south
+            } else if (c === 0) {
+              doorAngle = isLeftPiece ? 0 : 180; // west
+            } else if (c === COLS - 1) {
+              doorAngle = 90; // east
+            }
+          }
 
-          const img = rotateDoor
+          const img = isDoor(tile)
             ? this.scene.add
                 .image(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 'tileset-40', tile)
                 .setOrigin(0.5, 0.5)
-                .setAngle(90)
+                .setAngle(doorAngle)
             : this.scene.add.image(x, y, 'tileset-40', tile).setOrigin(0, 0);
           img.setDepth(0);
           this.tileLayer.add(img);
