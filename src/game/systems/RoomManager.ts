@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { COLS, ROWS, TILE_SIZE } from '../constants';
-import { DL, getRoom, isDoor, isWall } from '../../data/rooms';
+import { getRoom, isDoor, isWall } from '../../data/rooms';
 import { setPlayerRoom } from './playerLocation';
 import type { Edge, RoomDef } from '../../types';
 
@@ -48,28 +48,19 @@ export class RoomManager {
           const x = baseX + c * TILE_SIZE;
           const y = baseY + r * TILE_SIZE;
 
-          // Door art is drawn as a top-left corner piece (DL: trim on its top
-          // and left edges) or top-right (DR: trim on top and right). Each
-          // door tile needs the trim rotated onto whichever corner faces
-          // outward on its actual wall — e.g. a south-wall door needs the
-          // trim on the BOTTOM (outward) and its outer side edge, not top.
+          // Door art (DL/DR) is a 3-sided bracket — trimmed on the outward
+          // edge plus both side edges, open only on the one edge that faces
+          // its partner tile. That means both tiles of a pair always need
+          // the SAME rotation: 0° for a horizontal pair (north/south — the
+          // open edges already face each other as drawn) and 90° for a
+          // vertical pair (west/east — rotating 90° swings each tile's open
+          // edge to face its partner above/below instead of beside it).
           // Rotation pivots around the sprite's origin, so for doors we
           // center the origin (and position) — a square tile rotated about
           // its center stays within the same cell — instead of the usual
           // top-left origin used for axis-aligned tiles.
-          let doorAngle = 0;
-          if (isDoor(tile)) {
-            const isLeftPiece = tile === DL;
-            if (r === 0) {
-              doorAngle = 0; // north: matches the art as drawn
-            } else if (r === ROWS - 1) {
-              doorAngle = isLeftPiece ? 270 : 90; // south
-            } else if (c === 0) {
-              doorAngle = isLeftPiece ? 0 : 180; // west
-            } else if (c === COLS - 1) {
-              doorAngle = 90; // east
-            }
-          }
+          const onVerticalEdge = c === 0 || c === COLS - 1;
+          const doorAngle = isDoor(tile) && onVerticalEdge ? 90 : 0;
 
           const img = isDoor(tile)
             ? this.scene.add
