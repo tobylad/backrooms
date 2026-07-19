@@ -12,9 +12,9 @@ export class BootScene extends Phaser.Scene {
       frameHeight: 32,
     });
 
-    // Player — each frame 32x48, sheet 96x192 (3 cols x 4 rows = 12 frames).
+    // Player — each frame 48x48, sheet 144x192 (3 cols x 4 rows = 12 frames).
     this.load.spritesheet('player', 'assets/player.png', {
-      frameWidth: 32,
+      frameWidth: 48,
       frameHeight: 48,
     });
   }

@@ -22,8 +22,8 @@ export class PlayerController {
 
   constructor(scene: Phaser.Scene, x: number, y: number, sfx?: Sfx) {
     const sprite = scene.physics.add.sprite(x, y, 'player', 0);
-    sprite.setSize(20, 20); // smaller collision box than the 32x48 art
-    sprite.setOffset(6, 24); // anchored to the lower half (the "feet")
+    sprite.setSize(30, 20); // smaller collision box than the 48x48 art
+    sprite.setOffset(9, 24); // anchored to the lower half (the "feet")
     sprite.setCollideWorldBounds(false); // edges handled manually
     sprite.setDepth(10);
     this.sprite = sprite;
